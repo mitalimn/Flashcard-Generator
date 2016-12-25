@@ -84,21 +84,54 @@ makeCard = function(){
 	})
 }
 
-// playCard = function(){
-// 	inquirer.prompt([{
-// 		type: "list",
-//         name: "cardType",
-//         message: "\nBasic or Cloze card\n",
-//         choices: ["basic-card", "cloze-card"]
-// 	}]).then(function(ans){
-// 		if(ans.cardType === "basic-card"){
+playCard = function(){
+	inquirer.prompt([{
+		type: "list",
+        name: "cardType",
+        message: "\nBasic or Cloze card\n",
+        choices: ["basic-card", "cloze-card"]
+	}]).then(function(ans){
+		if(ans.cardType === "basic-card"){
+			fs.readFile("logBasicCard.json", "utf8", function(err, data) {
 
-// 		}
-// 		else if(ans.cardType === "cloze-card"){
+                    var data = JSON.parse(data);
+                    // console.log(data);
+                    //to generate random questions
+                    // var qAsked = false;
+                    var random = Math.floor(Math.random() * data.length);
+                    // console.log("== Random == " + random);
+                    console.log("question ==-----", data[random].front);
+inquirer.prompt([{	type : "input",
+					name :"yourans",
+					message : "Go for it.. "
+					}]).then(function(basicans){
+						if(basicans.yourans.toLowerCase() === data[random].back.toLowerCase()){
+							console.log("\nYou guessed it right..");
+							playCard();
+						}
+						console.log("\nWrong answer..");
+						console.log("\nCorrect Answer is : ", data[random].back);
+					})
+					
+				
+                })
+                 //call back fs.read close
+
+                 inquirer.prompt({
+            		type : "confirm",
+            		name : "playagain",
+            		message : "want to play again ?(y/n)",
+            		default : true
+            	})
+
+			playCard();
+
+		}
+		else if(ans.cardType === "cloze-card"){
 			
-// 		}
-// 	})
-// }
+		}
+	})
+}
 
 
 function logEverything(logDataObj) {
