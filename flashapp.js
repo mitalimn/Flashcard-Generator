@@ -128,7 +128,29 @@ inquirer.prompt([{	type : "input",
 
 		}
 		else if(ans.cardType === "cloze-card"){
-			
+			fs.readFile("logCloze.json", "utf8", function(err, data) {
+
+                    var data = JSON.parse(data);
+                    console.log(data);
+
+                    var random = Math.floor(Math.random() * data.length);
+                    // console.log("== Random == " + random);
+                    console.log("question : ", data[random].partialText);
+
+                    inquirer.prompt([{
+                    	type : "input",
+                    	name : "clozeyourans",
+                    	message : "Go for it..."
+                    }]).then(function(anscloze){
+                    	if(anscloze.clozeyourans.toLowerCase() === data[random].answer.toLowerCase()){
+                    		console.log("You guessed it right");
+                    	}
+                    	else
+                    		console.log("Thats a wrong answer");
+                    	console.log("\n Correct ans is : ",data[random].answer);
+                    })
+
+                })
 		}
 	})
 }
