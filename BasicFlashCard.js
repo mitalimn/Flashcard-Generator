@@ -1,6 +1,8 @@
 BasicFlashCard = function(front, back){
 	this.front = front;
 	this.back = back;
+
+	this.res
 }
 
 BasicFlashCard.prototype.question = function(first_argument) {

@@ -7,33 +7,46 @@ var ClozeFlashCard = require("./ClozeFlashCard");
 var basicCardArray = [];
 var clozeCardArray = [];
 
-inquirer.prompt([{
-	type: "list",
-    name: "doWhat",
-    message: "\nDo what with Flash Cards ???\n",
-    choices: ["create-card", "play-card", "exit"]
-}]).then(function(ans){
-	if(ans.doWhat === "create-card"){
-		makeCard();
-		// console.log("Enter front text for the card");
-	}
-	else if(ans.doWhat === "play-card"){
-		playCard();
-	}
-	else
-		return;
-});
+init = function() {
+    inquirer.prompt([{
+        type: "list",
+        name: "doWhat",
+        message: "\nDo what with Flash Cards ???\n",
+        choices: ["create-card", "play-card", "exit"]
+    }]).then(function(ans) {
+        if (ans.doWhat === "create-card") {
+            makeCard();
+        } else if (ans.doWhat === "play-card") {
+            playCard();
+        } else
+            return;
+    });
 
+}
 
-makeCard = function(){
-	inquirer.prompt([{
-		type: "list",
+makeCard = function() {
+    inquirer.prompt([{
+        type: "list",
         name: "cardType",
         message: "\nBasic or Cloze card\n",
         choices: ["basic-card", "cloze-card"]
-	}]).then(function(ans){
-		if(ans.cardType === "basic-card"){
-			inquirer.prompt([{
+    }]).then(function(ans) {
+
+        switch (ans.cardType) {
+            case "basic-card":
+                makeCardBasic();
+                break;
+            case "cloze-card":
+                makeCardCloze();
+                break;
+            case "Exit":
+                return;
+        } //close switch case
+    })//call back close
+} //makecard fn closed
+
+  makeCardBasic = function() {
+            inquirer.prompt([{
                 type: "input",
                 name: "front",
                 message: "\nEnter question- front of the Card\n"
@@ -41,58 +54,84 @@ makeCard = function(){
                 type: "input",
                 name: "back",
                 message: "\nEnter answer- back of the card\n"
-            }]).then(function(ansbasic){
-            	var b1 = new BasicFlashCard(ansbasic.front, ansbasic.back);
-            	basicCardArray.push(b1);
-            	basicJSON = JSON.stringify(basicCardArray);
-                console.log("myjson" + basicJSON);
-                logEverything(basicJSON);
-//Ask the user if wants to create one more 
-            	inquirer.prompt({
-            		type : "confirm",
-            		name : "more",
-            		message : "want to create more? (y/n)",
-            		default : true
-            	})
-				makeCard();
-            })
-		}
-		else if(ans.cardType === "cloze-card"){
-			inquirer.prompt([{
-                type: "input",
-                name: "partialtext",
-                message: "\nEnter question- with blank (Ex. ---- is capital of India )\n"
-            }, {
-                type: "input",
-                name: "cloze",
-                message: "\nEnter answer- which was in the blank\n"
-            }]).then(function(anscloze){
-            	var c1 = new ClozeFlashCard(anscloze.partialtext, anscloze.cloze);
-            	clozeCardArray.push(c1);
-            	clozeJSON = JSON.stringify(clozeCardArray);
-                console.log("myjson" + clozeJSON);
-                logCloze(clozeJSON);
-                inquirer.prompt({
-            		type : "confirm",
-            		name : "more",
-            		message : "want to create more? (y/n)",
-            		default : true
-            	})
-				makeCard();
-			})
-		}
-	})
-}
+            }]).then(function(ansbasic) {
 
-playCard = function(){
-	inquirer.prompt([{
-		type: "list",
+var b1 = new BasicFlashCard(ansbasic.front, ansbasic.back);
+// basicCardArray.push(b1);
+
+  fs.readFile('logBasicCard.json',"utf8", function(err,content){
+  if(err) 
+  	console.log("Errrrrrrrr"  +err);
+
+
+  var parseJson = JSON.parse(content);
+  console.log(parseJson);
+  parseJson.push(b1);
+  console.log("=========adding new=========");
+// JSON.stringify(parseJson);
+// console.log(parseJson);
+  // for (i=0; i <parseJson.length; i++){
+  //  parseJson.push(basicCardArray);
+  //    }
+  fs.writeFile('logBasicCard.json',JSON.stringify(parseJson),function(err){
+    if(err) throw err;
+    console.log("file uodates")
+  })
+})
+
+                // var b1 = new BasicFlashCard(ansbasic.front, ansbasic.back);
+                // basicCardArray.push(b1);
+                // basicJSON = JSON.stringify(basicCardArray);
+                // console.log("myjson" + basicJSON);
+                // logEverything(basicJSON);
+                //Ask the user if wants to create one more 
+                inquirer.prompt({
+                    type: "confirm",
+                    name: "more",
+                    message: "want to create more? (y/n)",
+                    default: true
+                })
+                makeCard();
+            })
+}//fn close 
+
+        
+//         } else if (ans.cardType === "cloze-card") {
+//             inquirer.prompt([{
+//                 type: "input",
+//                 name: "partialtext",
+//                 message: "\nEnter question- with blank (Ex. ---- is capital of India )\n"
+//             }, {
+//                 type: "input",
+//                 name: "cloze",
+//                 message: "\nEnter answer- which was in the blank\n"
+//             }]).then(function(anscloze) {
+//                 var c1 = new ClozeFlashCard(anscloze.partialtext, anscloze.cloze);
+//                 clozeCardArray.push(c1);
+//                 clozeJSON = JSON.stringify(clozeCardArray);
+//                 console.log("myjson" + clozeJSON);
+//                 logCloze(clozeJSON);
+//                 inquirer.prompt({
+//                     type: "confirm",
+//                     name: "more",
+//                     message: "want to create more? (y/n)",
+//                     default: true
+//                 })
+//                 makeCard();
+//             })
+//         }
+//     })
+// }
+
+playCard = function() {
+    inquirer.prompt([{
+        type: "list",
         name: "cardType",
         message: "\nBasic or Cloze card\n",
         choices: ["basic-card", "cloze-card"]
-	}]).then(function(ans){
-		if(ans.cardType === "basic-card"){
-			fs.readFile("logBasicCard.json", "utf8", function(err, data) {
+    }]).then(function(ans) {
+        if (ans.cardType === "basic-card") {
+            fs.readFile("logBasicCard.json", "utf8", function(err, data) {
 
                     var data = JSON.parse(data);
                     // console.log(data);
@@ -101,34 +140,34 @@ playCard = function(){
                     var random = Math.floor(Math.random() * data.length);
                     // console.log("== Random == " + random);
                     console.log("question ==-----", data[random].front);
-inquirer.prompt([{	type : "input",
-					name :"yourans",
-					message : "Go for it.. "
-					}]).then(function(basicans){
-						if(basicans.yourans.toLowerCase() === data[random].back.toLowerCase()){
-							console.log("\nYou guessed it right..");
-							playCard();
-						}
-						console.log("\nWrong answer..");
-						console.log("\nCorrect Answer is : ", data[random].back);
-					})
-					
-				
+                    inquirer.prompt([{
+                        type: "input",
+                        name: "yourans",
+                        message: "Go for it.. "
+                    }]).then(function(basicans) {
+                        if (basicans.yourans.toLowerCase() === data[random].back.toLowerCase()) {
+                            console.log("\nYou guessed it right..");
+                            playCard();
+                        }
+                        console.log("\nWrong answer..");
+                        console.log("\nCorrect Answer is : ", data[random].back);
+                    })
+
+
                 })
-                 //call back fs.read close
+                //call back fs.read close
 
-                 inquirer.prompt({
-            		type : "confirm",
-            		name : "playagain",
-            		message : "want to play again ?(y/n)",
-            		default : true
-            	})
+            inquirer.prompt({
+                type: "confirm",
+                name: "playagain",
+                message: "want to play again ?(y/n)",
+                default: true
+            })
 
-			playCard();
+            playCard();
 
-		}
-		else if(ans.cardType === "cloze-card"){
-			fs.readFile("logCloze.json", "utf8", function(err, data) {
+        } else if (ans.cardType === "cloze-card") {
+            fs.readFile("logCloze.json", "utf8", function(err, data) {
 
                     var data = JSON.parse(data);
                     console.log(data);
@@ -138,21 +177,20 @@ inquirer.prompt([{	type : "input",
                     console.log("question : ", data[random].partialText);
 
                     inquirer.prompt([{
-                    	type : "input",
-                    	name : "clozeyourans",
-                    	message : "Go for it..."
-                    }]).then(function(anscloze){
-                    	if(anscloze.clozeyourans.toLowerCase() === data[random].answer.toLowerCase()){
-                    		console.log("You guessed it right");
-                    	}
-                    	else
-                    		console.log("Thats a wrong answer");
-                    	console.log("\n Correct ans is : ",data[random].answer);
+                        type: "input",
+                        name: "clozeyourans",
+                        message: "Go for it..."
+                    }]).then(function(anscloze) {
+                        if (anscloze.clozeyourans.toLowerCase() === data[random].answer.toLowerCase()) {
+                            console.log("You guessed it right");
+                        } else
+                            console.log("Thats a wrong answer");
+                        console.log("\n Correct ans is : ", data[random].answer);
                     })
 
-                })
-		}
-	})
+                }) //close read file 
+        } //else closed
+    })
 }
 
 
@@ -174,3 +212,5 @@ function logCloze(logDataObj) {
         console.log("File updated");
     });
 }
+
+init();
