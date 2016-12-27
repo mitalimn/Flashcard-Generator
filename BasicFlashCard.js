@@ -2,7 +2,7 @@ BasicFlashCard = function(front, back){
 	this.front = front;
 	this.back = back;
 
-	this.res
+	this.guessed = 0;
 }
 
 BasicFlashCard.prototype.question = function(first_argument) {
