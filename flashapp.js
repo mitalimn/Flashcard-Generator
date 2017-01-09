@@ -52,7 +52,7 @@ makeMore = function() {
                 message: "\nwant to create more? (y/n)",
                 default: true
             }).then(function(ans) {
-                if (ans.more === true) {
+                if (ans.more == true) {
                     makeCard();
                 } else {
                     console.log("\nGo back to main menu and exit ");
@@ -154,9 +154,7 @@ playCardBasic = function() {
                     }]).then(function(basicans) {
                         if (basicans.yourans.toLowerCase() === data[random].back.toLowerCase()) {
                             console.log("\nYou guessed it right..");
-                            playCard();
                         } else {
-                            this.guessed++;
                             console.log("\nWrong answer..");
                             console.log("\nCorrect Answer is : ", data[random].back);
                         }
@@ -173,7 +171,7 @@ function playAgain() {
             message: "\nwant to play again (y/n)",
             default: true
         }).then(function(ans) {
-            if (ans.more === true) {
+            if (ans.more == true) {
                 playCard();
             } else {
                 console.log("\nGo back to main menu and exit ");
@@ -195,7 +193,6 @@ playCardCloze = function() {
                 }]).then(function(clozeans) {
                     if (clozeans.yourans.toLowerCase() === data[random].answer.toLowerCase()) {
                         console.log("\nYou guessed it right..");
-                        playCard();
                     } else {
                         console.log("\nWrong answer..");
                         data[random].partialText = data[random].partialText.replace("----",
